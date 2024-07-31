@@ -17,14 +17,20 @@
 
 	$: realmData = realms
 		.map((realm) => {
-			const locale = realm.locale.match(/.{2}/g).join('_');
+			const locale = (() => {
+				let locale = realm.locale.match(/.{2}/g).join('_');
+				return locale in realm.name
+					? locale
+					: Object.keys(realm.name).find((i) => i.substring(0, 2) === locale.substring(0, 2));
+			})();
 			const name = realm.name[locale];
 			const rules = realm.type.type;
 			const region = getRegion(realm.region.key.href);
 			// const timezone = data.timezones.find((i) => i.timezone === realm.timezone).abbreviation;
 			const timezone = getTZ(realm.timezone);
 			const array = [name, rules, realm.locale, region, timezone];
-			if (realm.name[locale] !== realm.name.en_US) array.push(realm.name.en_US);
+			if (realm.name[locale].toLowerCase() !== realm.name.en_US.toLowerCase())
+				array.push(realm.name.en_US);
 			return `[${realm.id}]="${array.join()}"`;
 		})
 		.join(',\n');

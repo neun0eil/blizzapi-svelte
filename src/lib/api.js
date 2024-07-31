@@ -9,7 +9,7 @@ export class API {
 			this.token = await this.getToken();
 			this.cache = new DiskStore({
 				path: `cache/${region}`,
-				ttl: 86400000,
+				ttl: 604800000,
 				zip: true
 			});
 			return this;
